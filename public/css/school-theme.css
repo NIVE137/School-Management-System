@@ -1,0 +1,172 @@
+/* ============================================================
+   SCHOOL MANAGEMENT SYSTEM — ENHANCED THEME v4
+   System-Wide Dark / Light Mode Support & Modern UI Tokens
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Base font ── */
+body {
+    font-family: 'Inter', sans-serif !important;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* ── Light Mode Variables ── */
+[data-bs-theme="light"] {
+    --bs-body-bg: #f5f5f9;
+    --bs-body-color: #566a7f;
+    --bs-card-bg: #ffffff;
+    --bs-border-color: #e7e7ff;
+    --bs-navbar-bg: rgba(255,255,255,0.95);
+    --bs-heading-color: #566a7f;
+}
+
+/* ── Dark Mode Variables ── */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #25293c;
+    --bs-body-color: #b6bee3;
+    --bs-card-bg: #2f3349;
+    --bs-border-color: rgba(255, 255, 255, 0.08);
+    --bs-navbar-bg: #2f3349;
+    --bs-heading-color: #cfd3ec;
+}
+
+[data-bs-theme="dark"] body {
+    background-color: #25293c !important;
+    color: #b6bee3 !important;
+}
+
+/* ── Sidebar enhancements ── */
+.layout-menu {
+    box-shadow: 4px 0 24px rgba(0,0,0,0.18) !important;
+}
+.layout-menu .app-brand {
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    padding: 18px 16px !important;
+}
+.layout-menu .menu-link {
+    border-radius: 8px !important;
+    margin: 1px 8px !important;
+    transition: all 0.2s !important;
+}
+.layout-menu .menu-item.active > .menu-link {
+    background: linear-gradient(135deg, #696cff, #03c3ec) !important;
+    box-shadow: 0 4px 18px rgba(105,108,255,0.40) !important;
+}
+.layout-menu .menu-item.active > .menu-link .menu-icon,
+.layout-menu .menu-item.active > .menu-link div {
+    color: #fff !important;
+}
+
+/* ── eSchool logo mix blend fix ── */
+.layout-menu .app-brand-logo img,
+.left .school-logo img,
+.brand-block .logo-wrap img,
+.center-card .logo-wrap img {
+    mix-blend-mode: screen !important;
+    filter: none !important;
+    height: 34px !important;
+    width: auto !important;
+}
+
+/* ── Dark Mode Layout Components ── */
+[data-bs-theme="dark"] .layout-navbar {
+    background-color: #2f3349 !important;
+    color: #cfd3ec !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-bs-theme="dark"] .custom-card,
+[data-bs-theme="dark"] .bottom-card,
+[data-bs-theme="dark"] .stat-card,
+[data-bs-theme="dark"] .modal-content,
+[data-bs-theme="dark"] .card {
+    background-color: #2f3349 !important;
+    color: #b6bee3 !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-bs-theme="dark"] .stat-value {
+    color: #ffffff !important;
+}
+
+[data-bs-theme="dark"] .section-heading {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-bs-theme="dark"] .qa-btn {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #b6bee3 !important;
+}
+
+[data-bs-theme="dark"] .qa-btn:hover {
+    background-color: rgba(105, 108, 255, 0.12) !important;
+    color: #8082ff !important;
+}
+
+[data-bs-theme="dark"] .activity-item {
+    border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── Tables in Dark Mode ── */
+[data-bs-theme="dark"] .table-custom thead th {
+    color: #b6bee3 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+    background-color: #2b2c40 !important;
+}
+
+[data-bs-theme="dark"] .table-custom tbody td {
+    color: #b6bee3 !important;
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .table-custom tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ── DataTables controls ── */
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_filter input,
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_length select,
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2b2c40 !important;
+    color: #cfd3ec !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    border-color: #696cff !important;
+    box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.25) !important;
+}
+
+[data-bs-theme="dark"] .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #b6bee3 !important;
+}
+
+/* ── Action icons ── */
+.btn-action-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    text-decoration: none; margin-right: 4px; font-size: 0.8rem;
+    transition: all 0.2s; border: none; cursor: pointer;
+}
+.btn-action-icon.edit { background: rgba(105,108,255,0.1); color: #696cff; }
+.btn-action-icon.edit:hover { background: #696cff; color: #fff; }
+.btn-action-icon.delete { background: rgba(255,62,29,0.1); color: #ff3e1d; }
+.btn-action-icon.delete:hover { background: #ff3e1d; color: #fff; }
+
+.btn-doc-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(105,108,255,0.08); color: #696cff;
+    border: 1px solid rgba(105,108,255,0.2); border-radius: 6px;
+    padding: 4px 10px; font-size: 0.76rem; font-weight: 600; text-decoration: none;
+    transition: all 0.2s;
+}
+.btn-doc-link:hover { background: #696cff; color: #fff; text-decoration: none; }
+
+/* ── Page entry animation ── */
+.animate-page { animation: pageIn 0.35s ease both; }
+@keyframes pageIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
