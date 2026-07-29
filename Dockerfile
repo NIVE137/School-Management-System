@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libzip-dev \
+    libsqlite3-dev \
+    sqlite3 \
     zip \
     unzip \
     git \
@@ -31,7 +33,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif pcntl bcmath gd zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Enable Apache mod_rewrite module
