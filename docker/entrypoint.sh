@@ -11,17 +11,9 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force
 fi
 
-# Ensure database directory and SQLite file exist
-mkdir -p /var/www/html/database
-if [ ! -f /var/www/html/database/database.sqlite ]; then
-    echo "Creating database.sqlite file..."
-    touch /var/www/html/database/database.sqlite
-fi
-
-# Set ownership and permissions for storage, bootstrap/cache, and database
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-chmod 664 /var/www/html/database/database.sqlite || true
+# Ensure ownership and permissions for storage and bootstrap/cache
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Create storage symlink if missing
 if [ ! -L /var/www/html/public/storage ]; then
