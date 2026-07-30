@@ -340,7 +340,7 @@ class StaffController extends Controller
 
         // Dynamic Admin Email Handling (fetch active admin from database)
         $admin = Admin::first();
-        $adminEmail = $admin ? $admin->email : env('ADMIN_EMAIL', 'nivetha.novelx@gmail.com');
+        $adminEmail = $admin ? $admin->email : config('app.admin_email', 'nivetha.novelx@gmail.com');
 
         if ($adminEmail) {
             Log::info("SUCCESS: Admin email found: {$adminEmail}");

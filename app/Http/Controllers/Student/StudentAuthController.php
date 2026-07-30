@@ -9,121 +9,110 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-
-
+use Illuminate\Support\Facades\Validator;
 
 class StudentAuthController extends Controller
 {
     public function studentlogin(Request $request)
-{
-    // First time opening the page
-    if (!$request->has('email')) {
-        return view('Student.studentlogin');
-    }
-
-    DB::beginTransaction();
-
-    try {
+    {
+        // GET request renders the view
+        if ($request->isMethod('get')) {
+            return view('Student.studentlogin');
+        }
 
         // Validate Request
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        Log::info('Student Login Attempt', [
-            'email' => $request->email,
-            'ip'    => $request->ip(),
-            'time'  => now(),
-        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
 
-        // Find Student
-        $student = Student::where('email', $request->email)->first();
-
-        if (!$student) {
-
-            Log::warning('Student Login Failed - Email Not Found', [
+        try {
+            Log::info('Student Login Attempt', [
                 'email' => $request->email,
                 'ip'    => $request->ip(),
+                'time'  => now(),
             ]);
 
-            DB::rollBack();
+            // Find Student
+            $student = Student::where('email', $request->email)->first();
 
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Email does not exist.'
-            ]);
-        }
+            if (!$student) {
+                Log::warning('Student Login Failed - Email Not Found', [
+                    'email' => $request->email,
+                    'ip'    => $request->ip(),
+                ]);
 
-        // Check Status
-        if ($student->status != 'active') {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Email does not exist.'
+                ], 404);
+            }
 
-            Log::warning('Student Login Failed - Inactive Account', [
-                'student_id' => $student->id,
-                'email'      => $student->email,
-            ]);
+            // Check Status
+            if ($student->status != 'active') {
+                Log::warning('Student Login Failed - Inactive Account', [
+                    'student_id' => $student->id,
+                    'email'      => $student->email,
+                ]);
 
-            DB::rollBack();
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Your account is inactive. Please contact the administrator.'
+                ], 403);
+            }
 
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Your account is inactive. Please contact the administrator.'
-            ]);
-        }
+            // Check Password
+            if (!Hash::check($request->password, $student->password)) {
+                Log::warning('Student Login Failed - Incorrect Password', [
+                    'student_id' => $student->id,
+                    'email'      => $student->email,
+                    'ip'         => $request->ip(),
+                ]);
 
-        // Check Password
-        if (!Hash::check($request->password, $student->password)) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Incorrect password.'
+                ], 401);
+            }
 
-            Log::warning('Student Login Failed - Incorrect Password', [
+            // Login Student
+            Auth::guard('student')->login($student);
+            $request->session()->regenerate();
+
+            Log::info('Student Login Successful', [
                 'student_id' => $student->id,
                 'email'      => $student->email,
                 'ip'         => $request->ip(),
+                'time'       => now(),
             ]);
 
-            DB::rollBack();
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'Login Successful.',
+                'redirect_url' => route('studentprofile')
+            ]);
+
+        } catch (\Throwable $e) {
+            Log::error('Student Login Exception', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+                'ip'      => $request->ip(),
+            ]);
 
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Incorrect password.'
-            ]);
+                'message' => 'Login error: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Login Student
-        Auth::guard('student')->login($student);
-        $request->session()->regenerate();
-
-        DB::commit();
-
-        Log::info('Student Login Successful', [
-            'student_id' => $student->id,
-            'email'      => $student->email,
-            'ip'         => $request->ip(),
-            'time'       => now(),
-        ]);
-
-        return response()->json([
-            'status'       => 'success',
-            'message'      => 'Login Successful.',
-            'redirect_url' => route('studentprofile')
-        ]);
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        Log::error('Student Login Error', [
-            'message' => $e->getMessage(),
-            'line'    => $e->getLine(),
-            'file'    => $e->getFile(),
-            'ip'      => $request->ip(),
-        ]);
-
-        return response()->json([
-            'status'  => 'error',
-            'message' => 'Something went wrong. Please try again.'
-        ]);
     }
-}
     public function studentlayout()
     {
         return view('studentlayout');

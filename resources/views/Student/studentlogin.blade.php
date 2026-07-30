@@ -322,8 +322,9 @@
 
         $.ajax({
             url:  "{{ route('studentlogin') }}",
-            type: "GET",
-            data: { _token: "{{ csrf_token() }}", email, password: pass },
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", email: email, password: pass },
+            headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
             success: function (res) {
                 if (res.status === 'success') {
                     toastr.success('Login successful!');
@@ -333,8 +334,14 @@
                     btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Sign In to Portal');
                 }
             },
-            error: function () {
-                toastr.error('Something went wrong. Please try again.');
+            error: function (xhr) {
+                let msg = 'Something went wrong. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                } else if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    msg = Object.values(xhr.responseJSON.errors)[0][0];
+                }
+                toastr.error(msg);
                 btn.prop('disabled', false).html('<i class="fas fa-sign-in-alt me-2"></i>Sign In to Portal');
             }
         });

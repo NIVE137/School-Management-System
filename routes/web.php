@@ -16,7 +16,7 @@ Route::get('/', function () {
 Route::prefix('Admin')->group(function () {
 
     // Public Routes
-    Route::get('/login', [AdminAuthController::class, 'login'])->name('login');
+    Route::match(['get', 'post'], '/login', [AdminAuthController::class, 'login'])->name('login');
     Route::get('/forgetpassword', [AdminAuthController::class, 'forgetpassword'])->name('forgetpassword');
     Route::post('/checkemail', [AdminAuthController::class, 'checkEmail'])->name('checkemail');
     Route::get('/createnewpassword', [AdminAuthController::class, 'createnewpassword'])->name('createnewpassword');
@@ -70,7 +70,7 @@ Route::prefix('Admin')->group(function () {
 
 // Staff Prefix
 Route::prefix('/Staff')->group(function () {
-    Route::get('/stafflogin', [StaffAuthController::class, 'stafflogin'])->name('stafflogin');
+    Route::match(['get', 'post'], '/stafflogin', [StaffAuthController::class, 'stafflogin'])->name('stafflogin');
     Route::get('/staffforgetpassword', [StaffAuthController::class, 'staffforgetpassword'])->name('staffforgetpassword');
     Route::post('/staffcheckemail', [StaffAuthController::class, 'staffcheckEmail'])->name('staffcheckemail');
     Route::get('/staffcreatenewpassword', [StaffAuthController::class, 'staffcreatenewpassword'])->name('staffcreatenewpassword');
@@ -101,7 +101,7 @@ Route::prefix('/Staff')->group(function () {
 
 // Student Prefix
 Route::prefix('/Student')->group(function () {
-    Route::get('/studentlogin', [StudentAuthController::class, 'studentlogin'])->name('studentlogin');
+    Route::match(['get', 'post'], '/studentlogin', [StudentAuthController::class, 'studentlogin'])->name('studentlogin');
     Route::get('/studentforgetpassword', [StudentAuthController::class, 'studentforgetpassword'])->name('studentforgetpassword');
     Route::post('/studentcheckemail', [StudentAuthController::class, 'studentcheckemail'])->name('studentcheckemail');
     Route::get('/studentcreatenewpassword', [StudentAuthController::class, 'studentcreatenewpassword'])->name('studentcreatenewpassword');

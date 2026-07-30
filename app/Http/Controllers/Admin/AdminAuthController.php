@@ -8,27 +8,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Admin;
 
 class AdminAuthController extends Controller
 {
     public function login(Request $request)
     {
-        // First time opening the page
-        if (!$request->has('email')) {
+        // GET request renders the view
+        if ($request->isMethod('get')) {
             return view('Admin.login');
         }
 
-        DB::beginTransaction();
+        // Validate Request
+        $validator = Validator::make($request->all(), [
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
 
         try {
-
-            // Validate Request
-            $request->validate([
-                'email'    => 'required|email',
-                'password' => 'required',
-            ]);
-
             Log::info('Admin Login Attempt', [
                 'email' => $request->email,
                 'ip'    => $request->ip(),
@@ -39,42 +44,34 @@ class AdminAuthController extends Controller
             $admin = Admin::where('email', $request->email)->first();
 
             if (!$admin) {
-
                 Log::warning('Admin Login Failed - Email Not Found', [
                     'email' => $request->email,
                     'ip'    => $request->ip(),
                 ]);
 
-                DB::rollBack();
-
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'Email not found.'
-                ]);
+                ], 404);
             }
 
             // Check Password
             if (!Hash::check($request->password, $admin->password)) {
-
                 Log::warning('Admin Login Failed - Incorrect Password', [
                     'admin_id' => $admin->id,
                     'email'    => $admin->email,
                     'ip'       => $request->ip(),
                 ]);
 
-                DB::rollBack();
-
                 return response()->json([
                     'status'  => 'error',
                     'message' => 'Incorrect password.'
-                ]);
+                ], 401);
             }
 
             // Login Admin
             Auth::guard('admin')->login($admin);
             $request->session()->regenerate();
-
-            DB::commit();
 
             Log::info('Admin Login Successful', [
                 'admin_id' => $admin->id,
@@ -89,11 +86,8 @@ class AdminAuthController extends Controller
                 'redirect_url' => route('admindashboard')
             ]);
 
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            Log::error('Admin Login Error', [
+        } catch (\Throwable $e) {
+            Log::error('Admin Login Exception', [
                 'message' => $e->getMessage(),
                 'line'    => $e->getLine(),
                 'file'    => $e->getFile(),
@@ -102,8 +96,8 @@ class AdminAuthController extends Controller
 
             return response()->json([
                 'status'  => 'error',
-                'message' => 'Something went wrong. Please try again.'
-            ]);
+                'message' => 'Login error: ' . $e->getMessage()
+            ], 500);
         }
     }
     public function forgetpassword()
