@@ -110,6 +110,18 @@
     </nav>
 
     <div class="content-wrapper">
+        <div class="school-bg-animated-layer" aria-hidden="true">
+            <i class="fas fa-graduation-cap school-icon ic1"></i>
+            <i class="fas fa-book-open school-icon ic2"></i>
+            <i class="fas fa-pencil-alt school-icon ic3"></i>
+            <i class="fas fa-school school-icon ic4"></i>
+            <i class="fas fa-globe school-icon ic5"></i>
+            <i class="fas fa-lightbulb school-icon ic6"></i>
+            <i class="fas fa-book-bookmark school-icon ic7"></i>
+            <i class="fas fa-ruler-combined school-icon ic8"></i>
+            <i class="fas fa-user-graduate school-icon ic9"></i>
+            <i class="fas fa-award school-icon ic10"></i>
+        </div>
         <div class="container-xxl flex-grow-1 container-p-y">
             @yield('content')
         </div>

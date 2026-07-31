@@ -171,20 +171,79 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── Modern Animated School Dashboard Background ── */
+/* ── Modern Glassmorphism & Animated School Theme Background ── */
 .content-wrapper {
     position: relative;
     overflow: hidden;
+    background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #e0f2fe 100%) !important;
+    transition: background 0.3s ease;
 }
+
+[data-bs-theme="dark"] .content-wrapper {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0c2a4a 100%) !important;
+}
+
+.school-bg-animated-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.school-icon {
+    position: absolute;
+    color: #696cff;
+    opacity: 0.14;
+    filter: drop-shadow(0 4px 12px rgba(105, 108, 255, 0.15));
+    transition: color 0.3s, opacity 0.3s;
+    user-select: none;
+}
+
+[data-bs-theme="dark"] .school-icon {
+    color: #818cf8;
+    opacity: 0.18;
+}
+
+/* Individual Icon Positioning & Dynamic Floating Animations */
+.school-icon.ic1  { font-size: 54px; top: 5%;   left: 4%;   animation: floatSchool1 22s ease-in-out infinite alternate; }
+.school-icon.ic2  { font-size: 48px; top: 16%;  right: 5%;  animation: floatSchool2 26s ease-in-out infinite alternate; }
+.school-icon.ic3  { font-size: 44px; top: 40%;  left: 6%;   animation: floatSchool3 20s ease-in-out infinite alternate; }
+.school-icon.ic4  { font-size: 64px; top: 65%;  right: 6%;  animation: floatSchool1 28s ease-in-out infinite alternate; }
+.school-icon.ic5  { font-size: 50px; bottom: 6%;left: 5%;   animation: floatSchool2 24s ease-in-out infinite alternate; }
+.school-icon.ic6  { font-size: 42px; top: 10%;  left: 46%;  animation: floatSchool3 18s ease-in-out infinite alternate; }
+.school-icon.ic7  { font-size: 46px; top: 52%;  left: 42%;  animation: floatSchool2 25s ease-in-out infinite alternate; }
+.school-icon.ic8  { font-size: 40px; bottom: 12%;right: 38%; animation: floatSchool1 21s ease-in-out infinite alternate; }
+.school-icon.ic9  { font-size: 52px; top: 30%;  right: 20%; animation: floatSchool3 23s ease-in-out infinite alternate; }
+.school-icon.ic10 { font-size: 44px; bottom: 22%;left: 26%;  animation: floatSchool2 19s ease-in-out infinite alternate; }
+
+@keyframes floatSchool1 {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(35px, -45px) rotate(12deg); }
+    100% { transform: translate(-25px, 25px) rotate(-8deg); }
+}
+
+@keyframes floatSchool2 {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(-40px, 35px) rotate(-15deg); }
+    100% { transform: translate(30px, -20px) rotate(10deg); }
+}
+
+@keyframes floatSchool3 {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(25px, 40px) rotate(18deg); }
+    100% { transform: translate(-35px, -30px) rotate(-12deg); }
+}
+
 .content-wrapper::before {
     content: '';
     position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 450px;
-    height: 450px;
+    top: -120px;
+    right: -120px;
+    width: 480px;
+    height: 480px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(105, 108, 255, 0.08) 0%, rgba(3, 195, 236, 0.02) 70%, transparent 100%);
+    background: radial-gradient(circle, rgba(105, 108, 255, 0.12) 0%, rgba(3, 195, 236, 0.03) 70%, transparent 100%);
     pointer-events: none;
     z-index: 0;
     animation: dashFloat1 18s ease-in-out infinite alternate;
@@ -192,22 +251,22 @@ body {
 .content-wrapper::after {
     content: '';
     position: absolute;
-    bottom: -120px;
-    left: -120px;
-    width: 500px;
-    height: 500px;
+    bottom: -140px;
+    left: -140px;
+    width: 520px;
+    height: 520px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, rgba(105, 108, 255, 0.01) 70%, transparent 100%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, rgba(105, 108, 255, 0.02) 70%, transparent 100%);
     pointer-events: none;
     z-index: 0;
     animation: dashFloat2 22s ease-in-out infinite alternate;
 }
 
 [data-bs-theme="dark"] .content-wrapper::before {
-    background: radial-gradient(circle, rgba(105, 108, 255, 0.12) 0%, rgba(3, 195, 236, 0.03) 70%, transparent 100%);
+    background: radial-gradient(circle, rgba(129, 140, 248, 0.18) 0%, rgba(3, 195, 236, 0.05) 70%, transparent 100%);
 }
 [data-bs-theme="dark"] .content-wrapper::after {
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, rgba(105, 108, 255, 0.02) 70%, transparent 100%);
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(105, 108, 255, 0.04) 70%, transparent 100%);
 }
 
 @keyframes dashFloat1 {
