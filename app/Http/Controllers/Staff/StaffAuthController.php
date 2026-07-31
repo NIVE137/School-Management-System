@@ -185,100 +185,99 @@ class StaffAuthController extends Controller
         ]);
     }
 }
-    public function studentresetpassword(Request $request)
-{
-    DB::beginTransaction();
+    public function staffresetPassword(Request $request)
+    {
+        DB::beginTransaction();
 
-    try {
-
-        // Validate Request
-        $request->validate([
-            'new_password' => 'required|min:6',
-            'confirm_password' => 'required|same:new_password',
-        ]);
-
-        Log::info('Student Password Reset Attempt', [
-            'ip'   => $request->ip(),
-            'time' => now(),
-        ]);
-
-        // Get Email from Session
-        $email = session('student_reset_email');
-
-        if (!$email) {
-
-            Log::warning('Student Password Reset Failed - Session Expired', [
-                'ip' => $request->ip(),
+        try {
+            $request->validate([
+                'new_password' => 'required|min:6',
+                'confirm_password' => 'required|same:new_password',
             ]);
 
+            Log::info('Staff Password Reset Attempt', [
+                'ip'   => $request->ip(),
+                'time' => now(),
+            ]);
+
+            // Get Email from Session
+            $email = session('staff_reset_email');
+
+            if (!$email) {
+                Log::warning('Staff Password Reset Failed - Session Expired', [
+                    'ip' => $request->ip(),
+                ]);
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session expired. Please try again.'
+                ]);
+            }
+
+            // Find Staff
+            $staff = Staff::where('email', $email)->first();
+
+            if (!$staff) {
+                Log::warning('Staff Password Reset Failed - Staff Not Found', [
+                    'email' => $email,
+                    'ip'    => $request->ip(),
+                ]);
+
+                DB::rollBack();
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Staff account not found.'
+                ]);
+            }
+
+            // Update Password
+            $staff->password = Hash::make($request->new_password);
+            $staff->save();
+
+            // Remove Session
+            session()->forget('staff_reset_email');
+
+            DB::commit();
+
+            Log::info('Staff Password Reset Successful', [
+                'staff_id' => $staff->id,
+                'email'    => $staff->email,
+                'ip'       => $request->ip(),
+                'time'     => now(),
+            ]);
+
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'Password updated successfully.',
+                'redirect_url' => route('stafflogin')
+            ]);
+
+        } catch (\Exception $e) {
             DB::rollBack();
+
+            Log::error('Staff Password Reset Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+                'ip'      => $request->ip(),
+                'time'    => now(),
+            ]);
 
             return response()->json([
                 'status' => 'error',
-                'message' => 'Session expired. Please try again.'
+                'message' => 'Something went wrong. Please try again.'
             ]);
         }
-
-        // Find Student
-        $student = Student::where('email', $email)->first();
-
-        if (!$student) {
-
-            Log::warning('Student Password Reset Failed - Student Not Found', [
-                'email' => $email,
-                'ip'    => $request->ip(),
-            ]);
-
-            DB::rollBack();
-
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Student not found.'
-            ]);
-        }
-
-        // Update Password
-        $student->password = Hash::make($request->new_password);
-        $student->save();
-
-        // Remove Session
-        session()->forget('student_reset_email');
-
-        DB::commit();
-
-        Log::info('Student Password Reset Successful', [
-            'student_id' => $student->id,
-            'email'      => $student->email,
-            'ip'         => $request->ip(),
-            'time'       => now(),
-        ]);
-
-        return response()->json([
-            'status'       => 'success',
-            'message'      => 'Password updated successfully.',
-            'redirect_url' => route('studentlogin')
-        ]);
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        Log::error('Student Password Reset Error', [
-            'message' => $e->getMessage(),
-            'line'    => $e->getLine(),
-            'file'    => $e->getFile(),
-            'ip'      => $request->ip(),
-            'time'    => now(),
-        ]);
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Something went wrong. Please try again.'
-        ]);
     }
-}
+
     public function staffcreatenewpassword()
     {
+        if (!session()->has('staff_reset_email')) {
+            return redirect()->route('staffforgetpassword');
+        }
         return view('Staff.staffcreatenewpassword');
     }
     public function stafflogout(Request $request)

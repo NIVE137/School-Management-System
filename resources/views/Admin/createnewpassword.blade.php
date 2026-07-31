@@ -1,124 +1,205 @@
 <!doctype html>
-<html lang="en" class="layout-wide customizer-hide" dir="ltr" data-bs-theme="light">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create New Password — Education Management System</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('/assets/img/eeschool.png') }}">
-    <link rel="stylesheet" href="{{ asset('/assets') }}/vendor/css/core.css">
-    <link rel="stylesheet" href="{{ asset('/assets') }}/css/demo.css">
-    <link rel="stylesheet" href="{{ asset('/assets') }}/vendor/css/pages/page-auth.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/eeschool.png') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/school-theme.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
-        *{box-sizing:border-box;}body{font-family:'Inter',sans-serif;}
-        .auth-full-wrap{display:flex;min-height:100vh;}
-        .auth-left-panel{flex:0 0 55%;position:relative;overflow:hidden;background:linear-gradient(145deg,#0f172a 0%,#1e1e6e 50%,#0c3a5e 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 50px;}
-        .b{position:absolute;border-radius:50%;background:rgba(255,255,255,0.05);animation:bubbleFloat 8s ease-in-out infinite;}
-        .b1{width:320px;height:320px;top:-90px;right:-90px;}.b2{width:200px;height:200px;bottom:50px;left:-60px;animation-delay:3s;}
-        @keyframes bubbleFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-20px);}}
-        .text-z{position:relative;z-index:2;text-align:center;color:#fff;}
-        .icon-box{width:72px;height:72px;background:rgba(255,255,255,0.12);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid rgba(255,255,255,0.15);}
-        .icon-box i{font-size:2rem;color:#fff;}
-        .text-z h2{font-size:1.8rem;font-weight:800;letter-spacing:-.4px;}.text-z p{color:rgba(255,255,255,0.55);font-size:0.88rem;margin-top:8px;max-width:340px;}
-        .illus{position:relative;z-index:2;margin-top:36px;}.illus img{max-width:380px;width:100%;filter:drop-shadow(0 18px 36px rgba(0,0,0,0.28));}
-        .auth-right-panel{flex:0 0 45%;background:#fff;display:flex;align-items:center;justify-content:center;padding:60px 50px;}
-        .form-box{width:100%;max-width:360px;}
-        .fg{margin-bottom:18px;}.fg label{display:block;font-size:0.79rem;font-weight:600;color:#566a7f;margin-bottom:6px;}
-        .input-wrap{position:relative;}.input-wrap .ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#a5b7c8;font-size:0.88rem;}
-        .input-wrap input{width:100%;padding:10px 42px 10px 38px;border:1.5px solid #d9dee3;border-radius:9px;font-size:0.88rem;font-family:'Inter',sans-serif;color:#32475c;transition:border-color .2s,box-shadow .2s;}
-        .input-wrap input:focus{outline:none;border-color:#696cff;box-shadow:0 0 0 3px rgba(105,108,255,0.14);}
-        .input-wrap input::placeholder{color:#c8d0d8;}
-        .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#a5b7c8;cursor:pointer;font-size:0.88rem;padding:0;}
-        .toggle-pw:hover{color:#696cff;}
-        .strength-bar{height:4px;border-radius:2px;background:#e7e7ff;overflow:hidden;margin-top:6px;}
-        .strength-fill{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%;}
-        .btn-submit{width:100%;padding:12px;background:linear-gradient(135deg,#696cff,#03c3ec);color:#fff;border:none;border-radius:9px;font-size:0.93rem;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;}
-        .btn-submit:hover{box-shadow:0 6px 22px rgba(105,108,255,0.38);transform:translateY(-1px);}
-        .btn-submit:disabled{opacity:.7;cursor:not-allowed;transform:none;}
-        @media(max-width:768px){.auth-left-panel{display:none;}.auth-right-panel{flex:1;padding:40px 24px;}}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; font-family: 'Inter', sans-serif; overflow: hidden; background: #f8fafc; }
+        .page { display: flex; height: 100vh; width: 100vw; }
+        
+        .left { flex: 0 0 55%; position: relative; overflow: hidden; background: #0a1628; display: flex; flex-direction: column; justify-content: space-between; padding: 48px; }
+        .left .bg-img { position: absolute; inset: 0; background: url('{{ asset("assets/img/schooll.jpg") }}') center center / cover no-repeat; opacity: 0.35; transform: scale(1.04); animation: subtleZoom 20s ease-in-out infinite alternate; }
+        @keyframes subtleZoom { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+        .left .overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(8,15,40,0.92) 0%, rgba(15,30,80,0.85) 40%, rgba(5,60,100,0.80) 100%); }
+        .left .circle { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.04); animation: floatCircle 10s ease-in-out infinite; }
+        .left .c1 { width:380px;height:380px;top:-120px;right:-100px; }
+        .left .c2 { width:240px;height:240px;bottom:60px;left:-80px;animation-delay:3.5s; }
+        @keyframes floatCircle { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-28px); } }
+        .left-content { position: relative; z-index: 2; color: #fff; max-width: 480px; margin: auto 0; }
+        .icon-badge { width: 68px; height: 68px; background: rgba(255,255,255,0.12); border-radius: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 24px; border: 1px solid rgba(255,255,255,0.18); backdrop-filter: blur(8px); }
+        .left-content h1 { font-size: 2.2rem; font-weight: 800; line-height: 1.25; margin-bottom: 12px; letter-spacing: -0.5px; }
+        .left-content p { font-size: 0.95rem; color: rgba(255,255,255,0.72); line-height: 1.6; }
+        
+        .right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; background: #ffffff; }
+        .form-card { width: 100%; max-width: 400px; }
+        .form-card h2 { font-size: 1.65rem; font-weight: 800; color: #1e293b; letter-spacing: -0.4px; margin-bottom: 6px; }
+        .form-card p { font-size: 0.88rem; color: #64748b; margin-bottom: 28px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #334155; margin-bottom: 8px; }
+        .input-box { position: relative; }
+        .input-box i.prefix-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.95rem; transition: color 0.2s; }
+        .input-box input { width: 100%; padding: 12px 42px 12px 42px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 0.92rem; font-family: 'Inter', sans-serif; color: #0f172a; transition: all 0.2s; background: #fff; }
+        .input-box input:focus { outline: none; border-color: #696cff; box-shadow: 0 0 0 3px rgba(105,108,255,0.15); }
+        .input-box input:focus + i.prefix-icon { color: #696cff; }
+        .toggle-pw { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 0.95rem; padding: 0; }
+        .toggle-pw:hover { color: #696cff; }
+        
+        .strength-bar { height: 4px; border-radius: 2px; background: #e2e8f0; overflow: hidden; margin-top: 8px; }
+        .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+        
+        .btn-submit { width: 100%; padding: 13px; background: linear-gradient(135deg, #696cff 0%, #03c3ec 100%); color: #fff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 700; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(105,108,255,0.3); margin-top: 10px; }
+        .btn-submit:hover { box-shadow: 0 6px 22px rgba(105,108,255,0.45); transform: translateY(-1px); }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        @media (max-width: 900px) {
+            .left { display: none; }
+            .right { padding: 24px; }
+            html, body { overflow: auto; }
+            .page { height: auto; min-height: 100vh; }
+        }
     </style>
 </head>
 <body>
-<div class="auth-full-wrap">
-    <div class="auth-left-panel">
-        <div class="b b1"></div><div class="b b2"></div>
-        <div class="text-z">
-            <div class="icon-box"><i class="fas fa-shield-halved"></i></div>
-            <h2>Secure Your Account</h2>
-            <p>Create a strong new password to protect your account.</p>
+<div class="page">
+    <div class="left">
+        <div class="bg-img"></div>
+        <div class="overlay"></div>
+        <div class="circle c1"></div>
+        <div class="circle c2"></div>
+        <div class="left-content">
+            <div class="icon-badge"><i class="fas fa-shield-halved"></i></div>
+            <h1>Secure Your Admin Account</h1>
+            <p>Please enter a strong new password containing at least 8 characters to reset your password and secure your account.</p>
         </div>
-        <div class="illus"><img src="{{ asset('assets/school 1.png') }}" alt=""></div>
     </div>
-    <div class="auth-right-panel">
-        <div class="form-box">
-            <h2 style="font-size:1.5rem;font-weight:800;color:#32475c;letter-spacing:-.4px;margin-bottom:4px;">Create New Password</h2>
-            <p style="font-size:0.85rem;color:#a5b7c8;margin-bottom:28px;">Choose a strong password with at least 8 characters.</p>
-            <form id="createPasswordForm">
+    <div class="right">
+        <div class="form-card">
+            <h2>Create New Password</h2>
+            <p>Set a new password for your admin account.</p>
+            <form id="createNewPasswordForm">
                 @csrf
-                <div class="fg">
-                    <label>New Password</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-lock ic"></i>
-                        <input type="password" id="new_password" name="new_password" placeholder="Enter new password">
-                        <button type="button" class="toggle-pw" onclick="togglePw('new_password',this)"><i class="fas fa-eye"></i></button>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <div class="input-box">
+                        <input type="password" id="new_password" name="new_password" placeholder="At least 8 characters" required>
+                        <i class="fas fa-lock prefix-icon"></i>
+                        <button type="button" class="toggle-pw" onclick="togglePw('new_password', this)"><i class="fas fa-eye"></i></button>
                     </div>
-                    <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
-                    <small id="strength-label" style="font-size:0.72rem;color:#a5b7c8;display:block;margin-top:3px;"></small>
+                    <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                    <small id="strengthText" style="font-size:0.75rem;color:#94a3b8;display:block;margin-top:4px;"></small>
                 </div>
-                <div class="fg">
-                    <label>Confirm Password</label>
-                    <div class="input-wrap">
-                        <i class="fas fa-lock ic"></i>
-                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password">
-                        <button type="button" class="toggle-pw" onclick="togglePw('confirm_password',this)"><i class="fas fa-eye"></i></button>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <div class="input-box">
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter new password" required>
+                        <i class="fas fa-lock prefix-icon"></i>
+                        <button type="button" class="toggle-pw" onclick="togglePw('confirm_password', this)"><i class="fas fa-eye"></i></button>
                     </div>
-                    <small id="match-label" style="font-size:0.72rem;display:block;margin-top:3px;"></small>
+                    <small id="matchText" style="font-size:0.75rem;display:block;margin-top:4px;"></small>
                 </div>
-                <button type="submit" id="create_password_submit" class="btn-submit"><i class="fas fa-check-circle me-2"></i> Set New Password</button>
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    <i class="fas fa-check-circle me-2"></i> Update Password & Sign In
+                </button>
             </form>
         </div>
     </div>
 </div>
 
-<div class="position-fixed top-0 end-0 p-3" style="z-index:1050;">
-    <div id="customToast" class="toast align-items-center text-white bg-success border-0"><div class="d-flex"><div class="toast-body" id="customToastBody"></div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>
-</div>
-
 <script src="{{ asset('/assets') }}/vendor/libs/jquery/jquery.js"></script>
-<script src="{{ asset('/assets') }}/vendor/libs/popper/popper.js"></script>
-<script src="{{ asset('/assets') }}/vendor/js/bootstrap.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script>
-    function showToast(msg,type='success'){const el=document.getElementById('customToast'),b=document.getElementById('customToastBody');b.innerText=msg;el.classList.remove('bg-success','bg-danger');el.classList.add(type==='success'?'bg-success':'bg-danger');new bootstrap.Toast(el,{delay:3500}).show();}
-    function togglePw(id,btn){const inp=document.getElementById(id),ic=btn.querySelector('i');if(inp.type==='password'){inp.type='text';ic.classList.replace('fa-eye','fa-eye-slash');}else{inp.type='password';ic.classList.replace('fa-eye-slash','fa-eye');}}
-    document.getElementById('new_password').addEventListener('input',function(){
-        const v=this.value,f=document.getElementById('strength-fill'),l=document.getElementById('strength-label');
-        let s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
-        const lv=[{w:'0%',c:'#e7e7ff',t:''},{w:'25%',c:'#ff3e1d',t:'Weak'},{w:'50%',c:'#ffab00',t:'Fair'},{w:'75%',c:'#696cff',t:'Good'},{w:'100%',c:'#71dd37',t:'Strong'}];
-        const i=Math.min(s,4);f.style.width=lv[i].w;f.style.background=lv[i].c;l.textContent=lv[i].t;l.style.color=lv[i].c;
+    toastr.options = { closeButton: true, progressBar: true, positionClass: "toast-top-right", timeOut: 4000 };
+
+    function togglePw(id, btn) {
+        const inp = document.getElementById(id);
+        const icon = btn.querySelector('i');
+        if (inp.type === 'password') {
+            inp.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            inp.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    }
+
+    document.getElementById('new_password').addEventListener('input', function() {
+        const val = this.value;
+        const fill = document.getElementById('strengthFill');
+        const text = document.getElementById('strengthText');
+        let score = 0;
+        if (val.length >= 6) score++;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+
+        const levels = [
+            { w: '0%', c: '#e2e8f0', t: '' },
+            { w: '25%', c: '#ef4444', t: 'Weak' },
+            { w: '50%', c: '#f59e0b', t: 'Fair' },
+            { w: '75%', c: '#696cff', t: 'Good' },
+            { w: '100%', c: '#10b981', t: 'Strong' }
+        ];
+        const idx = Math.min(score, 4);
+        fill.style.width = levels[idx].w;
+        fill.style.background = levels[idx].c;
+        text.textContent = levels[idx].t;
+        text.style.color = levels[idx].c;
     });
-    document.getElementById('confirm_password').addEventListener('input',function(){
-        const np=document.getElementById('new_password').value,ml=document.getElementById('match-label');
-        if(this.value&&this.value===np){ml.textContent='✓ Passwords match';ml.style.color='#71dd37';}
-        else if(this.value){ml.textContent='✗ Do not match';ml.style.color='#ff3e1d';}
-        else ml.textContent='';
+
+    document.getElementById('confirm_password').addEventListener('input', function() {
+        const np = document.getElementById('new_password').value;
+        const mt = document.getElementById('matchText');
+        if (this.value && this.value === np) {
+            mt.textContent = '✓ Passwords match';
+            mt.style.color = '#10b981';
+        } else if (this.value) {
+            mt.textContent = '✕ Passwords do not match';
+            mt.style.color = '#ef4444';
+        } else {
+            mt.textContent = '';
+        }
     });
-    document.getElementById('createPasswordForm').addEventListener('submit',function(e){
+
+    document.getElementById('createNewPasswordForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        const np=document.getElementById('new_password').value,cp=document.getElementById('confirm_password').value,btn=document.getElementById('create_password_submit');
-        if(!np||!cp){showToast('Both fields are required.','error');return;}
-        if(np!==cp){showToast('Passwords do not match.','error');return;}
-        if(np.length<8){showToast('Password must be at least 8 characters.','error');return;}
-        btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin me-2"></i> Saving...';
+        const np = $("#new_password").val();
+        const cp = $("#confirm_password").val();
+        const btn = document.getElementById('btnSubmit');
+
+        if (!np || !cp) {
+            toastr.error("Both password fields are required.");
+            return;
+        }
+        if (np !== cp) {
+            toastr.error("Passwords do not match.");
+            return;
+        }
+        if (np.length < 8) {
+            toastr.error("Password must be at least 8 characters long.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Updating...';
+
         $.ajax({
-            url:"{{ route('resetpassword') }}",type:"POST",
-            data:{_token:"{{ csrf_token() }}",new_password:np,confirm_password:cp},
-            success:function(res){
-                if(res.status==='success'){Swal.fire({icon:'success',title:'Password Updated!',text:res.message,confirmButtonColor:'#696cff'}).then(()=>window.location.href=res.redirect_url);}
-                else{showToast(res.message||'Something went wrong.','error');btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle me-2"></i> Set New Password';}
+            url: "{{ route('resetpassword') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", new_password: np, confirm_password: cp },
+            success: function(res) {
+                if (res.status === "success") {
+                    toastr.success(res.message || "Password updated successfully!");
+                    setTimeout(function() { window.location.href = res.redirect_url; }, 1000);
+                } else {
+                    toastr.error(res.message || "Something went wrong.");
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> Update Password & Sign In';
+                }
             },
-            error:function(){showToast('Something went wrong.','error');btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle me-2"></i> Set New Password';}
+            error: function(xhr) {
+                const msg = xhr.responseJSON?.message || "Something went wrong. Please try again.";
+                toastr.error(msg);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle me-2"></i> Update Password & Sign In';
+            }
         });
     });
 </script>

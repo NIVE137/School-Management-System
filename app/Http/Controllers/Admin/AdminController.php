@@ -446,16 +446,38 @@ class AdminController extends Controller
 
     public function savedocuments(Request $request, $id)
     {
+        $request->validate([
+            'birth_certificate' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'aadher'            => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'parent_idproof'    => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'address_proof'     => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'tc'                => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'mark_sheet'        => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+        ]);
+
         DB::beginTransaction();
         try {
             $student = Student::findOrFail($id);
             $files   = ['birth_certificate', 'aadher', 'parent_idproof', 'address_proof', 'tc', 'mark_sheet'];
+            $destinationPath = public_path('asset/documents');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
 
             foreach ($files as $file) {
                 if ($request->hasFile($file)) {
+                    // Unlink previous file if exists
+                    if (!empty($student->{$file})) {
+                        $oldPath = $destinationPath . '/' . $student->{$file};
+                        if (file_exists($oldPath)) {
+                            @unlink($oldPath);
+                        }
+                    }
+
                     $uploadedFile = $request->file($file);
-                    $filename     = time() . '_' . $uploadedFile->getClientOriginalName();
-                    $uploadedFile->move(public_path('asset/documents'), $filename);
+                    $filename     = time() . '_' . uniqid() . '.' . $uploadedFile->getClientOriginalExtension();
+                    $uploadedFile->move($destinationPath, $filename);
                     $student->{$file} = $filename;
                 }
             }
@@ -463,7 +485,7 @@ class AdminController extends Controller
             $student->save();
             DB::commit();
 
-            return redirect()->route('studentmanagement')->with('success', 'Documents uploaded successfully.');
+            return redirect()->back()->with('success', 'Documents saved successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', $e->getMessage());
@@ -472,13 +494,18 @@ class AdminController extends Controller
 
     public function deletedocument($id, $field)
     {
+        $allowedFields = ['birth_certificate', 'aadher', 'parent_idproof', 'address_proof', 'tc', 'mark_sheet'];
+        if (!in_array($field, $allowedFields)) {
+            return redirect()->back()->with('error', 'Invalid document type.');
+        }
+
         DB::beginTransaction();
         try {
             $student = Student::findOrFail($id);
             if ($student->$field) {
                 $path = public_path('asset/documents/' . $student->$field);
                 if (file_exists($path)) {
-                    unlink($path);
+                    @unlink($path);
                 }
                 $student->$field = null;
                 $student->save();

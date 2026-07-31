@@ -196,6 +196,9 @@ class StudentAuthController extends Controller
 }
     public function studentcreatenewpassword()
     {
+        if (!session()->has('student_reset_email')) {
+            return redirect()->route('studentforgetpassword');
+        }
         return view('Student.studentcreatenewpassword');
     }
 

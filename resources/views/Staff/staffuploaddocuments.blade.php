@@ -56,18 +56,25 @@ $documents = [
                         <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:#a5b7c8;"></i>
                         <small style="font-size:0.75rem;color:#a5b7c8;margin-top:6px;">No file uploaded</small>
                     @endif
-                    <div class="mt-3 d-flex gap-2">
+                    <div class="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                        @if($student->$field)
+                            <a href="{{ asset('asset/documents/'.$student->$field) }}" target="_blank" class="btn btn-info btn-sm" style="font-size:0.76rem;"><i class="fas fa-eye me-1"></i>View</a>
+                        @endif
                         <label class="btn btn-warning btn-sm" style="font-size:0.76rem;cursor:pointer;">
-                            <i class="fas fa-edit me-1"></i>Edit
+                            <i class="fas fa-edit me-1"></i>Upload / Edit
                             <input type="file" name="{{ $field }}" hidden accept=".jpg,.jpeg,.png,.pdf" onchange="previewFile(this,'{{ $field }}')">
                         </label>
-                        <a href="/Staff/staffdeletedocument/{{ $student->id }}/{{ $field }}" class="btn btn-danger btn-sm" style="font-size:0.76rem;"><i class="fas fa-trash me-1"></i>Delete</a>
+                        @if($student->$field)
+                            <a href="{{ route('staffdeletedocument', [$student->id, $field]) }}" class="btn btn-danger btn-sm" style="font-size:0.76rem;" onclick="return confirm('Are you sure you want to delete this document?')"><i class="fas fa-trash me-1"></i>Delete</a>
+                        @endif
                     </div>
                 </div>
             </div>
             @endforeach
         </div>
 
+        @if(session('success'))<div class="alert alert-success mt-4 mb-0">{{ session('success') }}</div>@endif
+        @if(session('error'))<div class="alert alert-danger mt-4 mb-0">{{ session('error') }}</div>@endif
         @if(isset($errors) && $errors->any())<div class="alert alert-danger mt-4"><ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>@endif
 
         <div class="mt-4 d-flex gap-3">

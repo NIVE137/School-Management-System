@@ -201,45 +201,73 @@ class StaffController extends Controller
 
     public function staffsavedocuments(Request $request, $id)
     {
+        $request->validate([
+            'birth_certificate' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'aadher'            => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'parent_idproof'    => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'address_proof'     => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'tc'                => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+            'mark_sheet'        => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:5120',
+        ]);
+
         DB::beginTransaction();
         try {
             $student = Student::findOrFail($id);
             $fields  = ['birth_certificate','aadher','parent_idproof','address_proof','tc','mark_sheet'];
+            $destinationPath = public_path('asset/documents');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
 
             foreach ($fields as $field) {
                 if ($request->hasFile($field)) {
+                    if (!empty($student->{$field})) {
+                        $oldPath = $destinationPath . '/' . $student->{$field};
+                        if (file_exists($oldPath)) {
+                            @unlink($oldPath);
+                        }
+                    }
+
                     $file     = $request->file($field);
-                    $filename = time().'_'.$file->getClientOriginalName();
-                    $file->move(public_path('asset/documents'), $filename);
+                    $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move($destinationPath, $filename);
                     $student->{$field} = $filename;
                 }
             }
             $student->save();
             DB::commit();
 
-            return redirect()->route('staffstudentmanagement')->with('success','Documents uploaded successfully.');
+            return redirect()->back()->with('success', 'Documents saved successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error','Something went wrong.');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
     public function staffdeletedocument($id, $field)
     {
+        $allowedFields = ['birth_certificate', 'aadher', 'parent_idproof', 'address_proof', 'tc', 'mark_sheet'];
+        if (!in_array($field, $allowedFields)) {
+            return redirect()->back()->with('error', 'Invalid document type.');
+        }
+
         DB::beginTransaction();
         try {
             $student = Student::findOrFail($id);
             if ($student->$field) {
-                $path = public_path('asset/documents/'.$student->$field);
-                if (file_exists($path)) unlink($path);
+                $path = public_path('asset/documents/' . $student->$field);
+                if (file_exists($path)) {
+                    @unlink($path);
+                }
                 $student->$field = null;
                 $student->save();
             }
             DB::commit();
-            return redirect()->back()->with('success','Document deleted.');
+            return redirect()->back()->with('success', 'Document deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error','Something went wrong.');
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 

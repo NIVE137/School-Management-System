@@ -170,3 +170,59 @@ body {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── Modern Animated School Dashboard Background ── */
+.content-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+.content-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(105, 108, 255, 0.08) 0%, rgba(3, 195, 236, 0.02) 70%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: dashFloat1 18s ease-in-out infinite alternate;
+}
+.content-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -120px;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, rgba(105, 108, 255, 0.01) 70%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: dashFloat2 22s ease-in-out infinite alternate;
+}
+
+[data-bs-theme="dark"] .content-wrapper::before {
+    background: radial-gradient(circle, rgba(105, 108, 255, 0.12) 0%, rgba(3, 195, 236, 0.03) 70%, transparent 100%);
+}
+[data-bs-theme="dark"] .content-wrapper::after {
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.10) 0%, rgba(105, 108, 255, 0.02) 70%, transparent 100%);
+}
+
+@keyframes dashFloat1 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40px, 30px) scale(1.08); }
+    100% { transform: translate(20px, 50px) scale(0.95); }
+}
+
+@keyframes dashFloat2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -40px) scale(1.1); }
+    100% { transform: translate(-30px, -20px) scale(0.92); }
+}
+
+.container-xxl, .container-p-y {
+    position: relative;
+    z-index: 1;
+}
