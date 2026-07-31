@@ -39,16 +39,125 @@
 <div class="layout-wrapper layout-content-navbar">
 <div class="layout-container">
 
+<style>
+/* Glassmorphism Sidebar Redesign */
+aside#layout-menu {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-right: 1px solid rgba(105, 108, 255, 0.14) !important;
+    box-shadow: 4px 0 24px rgba(105, 108, 255, 0.06) !important;
+}
+[data-bs-theme="dark"] aside#layout-menu {
+    background: rgba(26, 31, 56, 0.9) !important;
+    border-right-color: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+.sidebar-profile-widget {
+    margin: 16px 16px 20px 16px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.18);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    backdrop-filter: blur(8px);
+}
+
+.sidebar-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #6366f1;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+.sidebar-avatar-placeholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #6366f1;
+    background: rgba(99, 102, 241, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1;
+    font-size: 1.1rem;
+}
+
+.sidebar-user-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--bs-heading-color, #1e293b);
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+.sidebar-role-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #ffffff;
+    display: inline-block;
+}
+
+.menu-inner .menu-item {
+    margin: 4px 12px !important;
+}
+.menu-inner .menu-link {
+    border-radius: 12px !important;
+    padding: 10px 16px !important;
+    font-weight: 600 !important;
+    transition: all 0.25s ease !important;
+}
+.menu-inner .menu-item.active > .menu-link {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
+}
+.menu-inner .menu-item:not(.active) > .menu-link:hover {
+    background: rgba(99, 102, 241, 0.08) !important;
+    transform: translateX(4px);
+}
+</style>
+
 <aside id="layout-menu" class="layout-menu menu-vertical menu">
     <div class="app-brand demo">
         <a href="{{ route('studentprofile') }}" class="app-brand-link">
             <span class="app-brand-logo demo">
                 <span class="text-primary">
-                    <img src="{{ asset('assets/img/eeschool.png') }}" alt="eeschool" style="height:34px;width:auto;mix-blend-mode:screen;">
+                    <img src="{{ asset('assets/img/eeschool.png') }}" alt="eeschool" style="height:36px;width:auto;mix-blend-mode:screen;">
                 </span>
             </span>
+            <span class="app-brand-text demo menu-text fw-bold ms-2" style="font-size:1.05rem;color:#6366f1;">Education MS</span>
         </a>
     </div>
+
+    @php
+        $studentUser = Auth::guard('student')->user();
+    @endphp
+    @if($studentUser)
+    <div class="sidebar-profile-widget">
+        @if($studentUser->image && file_exists(public_path('asset/img/'.$studentUser->image)))
+            <img src="{{ asset('asset/img/'.$studentUser->image) }}" alt="Profile" class="sidebar-avatar">
+        @else
+            <div class="sidebar-avatar-placeholder"><i class="fas fa-user-graduate"></i></div>
+        @endif
+        <div>
+            <div class="sidebar-user-name">{{ $studentUser->student_name }}</div>
+            <span class="sidebar-role-badge"><i class="fas fa-graduation-cap me-1"></i> Student</span>
+        </div>
+    </div>
+    @endif
+
     <ul class="menu-inner py-1">
         <li class="menu-item @if(Route::is('studentprofile')) active @endif">
             <a href="{{ route('studentprofile') }}" class="menu-link">
