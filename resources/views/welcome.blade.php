@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education Management System</title>
+    <title>School Management System</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('/assets/img/eeschool.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -55,7 +55,7 @@
             </a>
         </div>
 
-        <p class="footer-note">&#169; {{ date('Y') }} Education Management System. All rights reserved.</p>
+        <p class="footer-note">&#169; {{ date('Y') }} School Management System. All rights reserved.</p>
     </div>
 </body>
 </html>

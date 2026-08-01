@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In — Education Management System</title>
+    <title>Sign In — School Management System</title>
     <!-- Original eeschool favicon — never change -->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/eeschool.png') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -246,7 +246,7 @@
                 <img src="{{ asset('assets/img/eeschool.png') }}" alt="eeschool logo">
             </div>
 
-            <h1>Education<br><span>Management</span> System</h1>
+            <h1>School<br><span>Management</span> System</h1>
             <p class="sub">A complete solution for managing students, staff, classes, attendance, fees, and more — all in one place.</p>
 
             <div class="stats-row">
