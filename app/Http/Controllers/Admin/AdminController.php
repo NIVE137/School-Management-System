@@ -16,6 +16,7 @@ use App\Models\Student;
 use App\Models\StudentAttendance;
 use App\Models\StaffAttendance;
 use App\Models\LeaveRequest;
+use App\Models\AdminNotification;
 
 class AdminController extends Controller
 {
@@ -258,6 +259,13 @@ class AdminController extends Controller
                 'image'      => $imageName,
             ]);
 
+            AdminNotification::notify(
+                'New Staff Registered',
+                'Staff member ' . $request->staff_name . ' (' . $request->role . ') has been registered.',
+                'staff_registered',
+                route('staffmanagement')
+            );
+
             DB::commit();
             return redirect()->route('staffmanagement')->with('success', 'Staff created successfully.');
         } catch (\Exception $e) {
@@ -355,6 +363,13 @@ class AdminController extends Controller
                 'parent_mobile' => $request->parent_mobile,
                 'status'        => 'active',
             ]);
+
+            AdminNotification::notify(
+                'New Student Registered',
+                'Student ' . $request->student_name . ' (Class: ' . $request->class_name . ') has been registered.',
+                'student_registered',
+                route('studentmanagement')
+            );
 
             DB::commit();
             return redirect()->route('uploaddocuments', $student->id)->with('success', 'Student created successfully. Upload documents below.');
@@ -483,6 +498,14 @@ class AdminController extends Controller
             }
 
             $student->save();
+
+            AdminNotification::notify(
+                'Student Document Uploaded',
+                'Verification documents updated for student ' . $student->student_name . '.',
+                'document_uploaded',
+                route('uploaddocuments', $student->id)
+            );
+
             DB::commit();
 
             return redirect()->back()->with('success', 'Documents saved successfully.');
@@ -734,5 +757,43 @@ class AdminController extends Controller
         $leave->rejection_reason = $request->rejection_reason ?? 'Not specified';
         $leave->save();
         return response()->json(['success' => true, 'message' => 'Leave request rejected.']);
+    }
+
+    // ── Admin Notifications API ─────────────────────────────────
+    public function getNotifications()
+    {
+        $unreadCount = AdminNotification::where('is_read', false)->count();
+        $notifications = AdminNotification::orderBy('created_at', 'desc')->take(20)->get()->map(function ($item) {
+            return [
+                'id'               => $item->id,
+                'title'            => $item->title,
+                'message'          => $item->message,
+                'type'             => $item->type,
+                'action_url'       => $item->action_url,
+                'is_read'          => $item->is_read,
+                'created_at_human' => $item->created_at ? $item->created_at->diffForHumans() : 'Just now',
+            ];
+        });
+
+        return response()->json([
+            'unreadCount'   => $unreadCount,
+            'notifications' => $notifications,
+        ]);
+    }
+
+    public function markNotificationRead($id)
+    {
+        $notif = AdminNotification::find($id);
+        if ($notif) {
+            $notif->is_read = true;
+            $notif->save();
+        }
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllNotificationsRead()
+    {
+        AdminNotification::where('is_read', false)->update(['is_read' => true]);
+        return response()->json(['success' => true]);
     }
 }

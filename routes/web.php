@@ -65,6 +65,11 @@ Route::prefix('Admin')->group(function () {
         Route::get('/leaverequests', [AdminController::class, 'leaverequests'])->name('leaverequests');
         Route::post('/approveleaverequest/{id}', [AdminController::class, 'approveLeaveRequest'])->name('approveleaverequest');
         Route::post('/rejectleaverequest/{id}', [AdminController::class, 'rejectLeaveRequest'])->name('rejectleaverequest');
+
+        // Admin Notifications
+        Route::get('/get-notifications', [AdminController::class, 'getNotifications'])->name('admin.getNotifications');
+        Route::post('/mark-notification-read/{id}', [AdminController::class, 'markNotificationRead'])->name('admin.markNotificationRead');
+        Route::post('/mark-all-notifications-read', [AdminController::class, 'markAllNotificationsRead'])->name('admin.markAllNotificationsRead');
     });
 });
 

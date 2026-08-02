@@ -10,6 +10,7 @@ use App\Models\ClassRoom;
 use App\Models\StudentAttendance;
 use App\Models\LeaveRequest;
 use App\Models\Admin;
+use App\Models\AdminNotification;
 use App\Mail\LeaveRequestNotification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
@@ -363,6 +364,13 @@ class StaffController extends Controller
             'reason'         => $request->reason,
             'status'         => 'pending',
         ]);
+
+        AdminNotification::notify(
+            'New Leave Request Submitted',
+            'Staff member ' . $staff->staff_name . ' has submitted a ' . $request->leave_type . ' leave request.',
+            'leave_request',
+            route('leaverequests')
+        );
 
         Log::info("SUCCESS: Leave request #{$leaveRequest->id} created successfully for {$leaveRequest->applicant_name}");
 

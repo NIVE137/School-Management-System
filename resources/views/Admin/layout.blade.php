@@ -142,6 +142,74 @@
                         <li><button type="button" class="dropdown-item align-items-center" data-bs-theme-value="system"><i class="icon-base ti tabler-device-desktop icon-22px me-3"></i>System</button></li>
                     </ul>
                 </li>
+                <!-- Notification Bell Dropdown -->
+                <li class="nav-item dropdown me-2 position-relative">
+                    <a class="nav-link dropdown-toggle hide-arrow btn btn-icon btn-text-secondary rounded-pill position-relative"
+                       id="nav-notifications" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="icon-base ti tabler-bell icon-22px text-heading"></i>
+                        <span class="badge bg-danger rounded-circle position-absolute"
+                              id="notifBadgeCount"
+                              style="top: 2px; right: 2px; font-size: 0.62rem; padding: 3px 6px; min-width: 18px; display: {{ ($unreadCount ?? 0) > 0 ? 'inline-block' : 'none' }};">
+                            {{ $unreadCount ?? 0 }}
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end py-0 shadow-lg border-0" style="width: 350px; max-height: 450px; border-radius: 14px; overflow: hidden;">
+                        <div class="dropdown-header d-flex align-items-center justify-content-between py-3 px-3 border-bottom bg-body-tertiary">
+                            <h6 class="mb-0 fw-bold d-flex align-items-center gap-2">
+                                <i class="fas fa-bell text-primary"></i> Notifications
+                            </h6>
+                            <button type="button" class="btn btn-sm btn-link p-0 text-decoration-none fw-semibold text-primary" style="font-size: 0.75rem;" onclick="markAllNotificationsAsRead()">
+                                Mark all read
+                            </button>
+                        </div>
+                        <div class="dropdown-notif-body" id="notifListContainer" style="max-height: 380px; overflow-y: auto;">
+                            @if(isset($adminNotifications) && count($adminNotifications) > 0)
+                                @foreach($adminNotifications as $notif)
+                                    <a href="{{ $notif->action_url ?? 'javascript:void(0)' }}"
+                                       onclick="markNotificationRead({{ $notif->id }}, this)"
+                                       class="dropdown-item py-3 px-3 border-bottom d-flex align-items-start gap-3 notif-item {{ !$notif->is_read ? 'bg-primary-subtle' : '' }}"
+                                       style="white-space: normal; transition: background 0.2s;">
+                                        <div class="flex-shrink-0 mt-1">
+                                            @if($notif->type === 'leave_request')
+                                                <div class="avatar-initial rounded-circle bg-warning text-white p-2" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+                                                    <i class="fas fa-calendar-minus fa-sm"></i>
+                                                </div>
+                                            @elseif($notif->type === 'student_registered')
+                                                <div class="avatar-initial rounded-circle bg-success text-white p-2" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+                                                    <i class="fas fa-user-graduate fa-sm"></i>
+                                                </div>
+                                            @elseif($notif->type === 'staff_registered')
+                                                <div class="avatar-initial rounded-circle bg-info text-white p-2" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+                                                    <i class="fas fa-chalkboard-teacher fa-sm"></i>
+                                                </div>
+                                            @elseif($notif->type === 'document_uploaded')
+                                                <div class="avatar-initial rounded-circle bg-primary text-white p-2" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+                                                    <i class="fas fa-file-upload fa-sm"></i>
+                                                </div>
+                                            @else
+                                                <div class="avatar-initial rounded-circle bg-secondary text-white p-2" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;">
+                                                    <i class="fas fa-bell fa-sm"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <span class="fw-bold text-dark" style="font-size: 0.82rem;">{{ $notif->title }}</span>
+                                                <small class="text-muted" style="font-size: 0.68rem;">{{ $notif->created_at ? $notif->created_at->diffForHumans() : '' }}</small>
+                                            </div>
+                                            <p class="mb-0 text-secondary" style="font-size: 0.76rem; line-height: 1.35;">{{ $notif->message }}</p>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            @else
+                                <div class="text-center py-4 px-3 text-muted">
+                                    <i class="fas fa-bell-slash fa-2x mb-2 text-secondary opacity-50"></i>
+                                    <p class="mb-0" style="font-size: 0.8rem;">No notifications found</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </li>
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                     <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -276,6 +344,48 @@
         @if(session('warning')) toastr.warning("{{ addslashes(session('warning')) }}"); @endif
         @if(session('info'))    toastr.info("{{ addslashes(session('info')) }}");       @endif
     });
+
+    /* Notification Functions */
+    function markNotificationRead(id, element) {
+        $.ajax({
+            url: "{{ url('/Admin/mark-notification-read') }}/" + id,
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}" },
+            success: function() {
+                if (element) {
+                    $(element).removeClass('bg-primary-subtle');
+                }
+                updateNotifBadge();
+            }
+        });
+    }
+
+    function markAllNotificationsAsRead() {
+        $.ajax({
+            url: "{{ route('admin.markAllNotificationsRead') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}" },
+            success: function() {
+                $('.notif-item').removeClass('bg-primary-subtle');
+                $('#notifBadgeCount').hide().text('0');
+                toastr.success('All notifications marked as read.');
+            }
+        });
+    }
+
+    function updateNotifBadge() {
+        $.ajax({
+            url: "{{ route('admin.getNotifications') }}",
+            type: "GET",
+            success: function(res) {
+                if (res.unreadCount > 0) {
+                    $('#notifBadgeCount').text(res.unreadCount).show();
+                } else {
+                    $('#notifBadgeCount').hide().text('0');
+                }
+            }
+        });
+    }
 </script>
 
 @stack('scripts')
