@@ -70,6 +70,11 @@ Route::prefix('Admin')->group(function () {
         Route::get('/get-notifications', [AdminController::class, 'getNotifications'])->name('admin.getNotifications');
         Route::post('/mark-notification-read/{id}', [AdminController::class, 'markNotificationRead'])->name('admin.markNotificationRead');
         Route::post('/mark-all-notifications-read', [AdminController::class, 'markAllNotificationsRead'])->name('admin.markAllNotificationsRead');
+
+        // Aliases for compatibility
+        Route::get('/notifications-list', [AdminController::class, 'getNotifications'])->name('getNotifications');
+        Route::post('/markNotificationRead/{id}', [AdminController::class, 'markNotificationRead'])->name('markNotificationRead');
+        Route::post('/markAllNotificationsRead', [AdminController::class, 'markAllNotificationsRead'])->name('markAllNotificationsRead');
     });
 });
 
